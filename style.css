@@ -39,7 +39,8 @@ main {
 .calculator {
     width: 550px;
     border: 2px black solid;
-    border-radius: 15px;
+    border-radius: 45px;
+    box-shadow: #4a5e69 5px 4px 12px;
     padding: 20px;
     background-color: var(--primary-dark);
 }
@@ -48,21 +49,21 @@ main {
     padding: 10px 20px;
     border-radius: 25px;
     margin-bottom: 15px;
-    background-color: rgba(26, 124, 141, 0.411);
+    background-color: rgba(31, 97, 109, 0.411);
     text-align: right;
     word-wrap: break-word;
     word-break: break-all;
     font-family: 'digital';
 }
 
-.user-input {
+.past-operation {
     min-height: 26px;
     font-size: 22px;
     color: var(--secondary-light);
 }
 
-.result {
-    min-height: 40px;
+.current-operation {
+    min-height: 80px;
     font-size: 80px;
     color: var(--primary-light);
 }
@@ -100,7 +101,7 @@ button.equals{
 }
 
 button.equals:hover {
-	background: #95f348;
+	background: #aff873;
 	color:var(--primary-dark);
 	transform: translateY(-0.2rem);
 }
@@ -111,13 +112,15 @@ button.operators {
 }
 
 button.digits:hover,
-button.decimal:hover {
+button.decimal:hover,
+button.positive-negative:hover {
 	background: var(--secondary-light);
 	color: var(--primary-dark);
 	transform: translateY(-0.2rem);
 }
 
-button.operators:hover {
+button.operators:hover,
+button.special:hover {
 	background: var(--primary-light);
 	color: var(--primary-dark);
 	transform: translateY(-0.2rem);
@@ -132,10 +135,12 @@ button.delete:hover {
 
 button.digits:active,
 button.operators:active,
+button.special:active,
 button.decimal:active,
 button.allclear:active,
 button.clear:active,
-button.equals:active {
+button.equals:active,
+button.positive-negative:active {
 	transform: translateY(0rem);
 }
 
@@ -156,11 +161,11 @@ button.equals:active {
 .fa-github {
     color: var(--primary-dark);
     font-size: 24px;
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.4s ease-in-out;
   }
   
   .fa-github:hover {
-    transform: rotate(360deg) scale(1.5);
+    transform: rotate(1turn) scale(1.5);
   }
 
 @font-face {
