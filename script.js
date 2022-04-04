@@ -58,7 +58,7 @@ function appendPoint() {
         resetResult()
     if (currentOperationDisplay.textContent === '')
         currentOperationDisplay.textContent = '0'
-    if (currentOperationDisplay.textContent.includes('.')) 
+    if (!currentOperationDisplay.textContent.includes('.')) 
         return currentOperationDisplay.textContent += '.'
 }
   
@@ -86,6 +86,7 @@ function convertToNegative(str) {
   
 function setOperation(operator) {
       if (currentOperation !== null) calculate()
+      
       firstOperand = currentOperationDisplay.textContent
       currentOperation = operator
       pastOperationDisplay.textContent = `${firstOperand} ${currentOperation}`
@@ -93,15 +94,42 @@ function setOperation(operator) {
 }
   
 function calculate() {
-    if (currentOperation === null || shouldResetDisplay) return
-    if (currentOperation === '÷' && currentOperationDisplay.textContent === '0') {
-        currentOperationDisplay.textContent = 'ERROR: DIV BY ZERO'
+    if (currentOperation === '!') {
+        resetDisplay()
+        shouldResetDisplay = false
+        if (firstOperand.includes('.')) {
+            currentOperationDisplay.textContent = 'ERROR'
+            pastOperationDisplay.textContent = 'ERROR: NO DECIMAL POINT IN FACTORIAL'
+        }
+        else {
+            currentOperationDisplay.textContent = factorialize(firstOperand)
+            pastOperationDisplay.textContent = `${firstOperand} ${currentOperation} =`
+        }
     }
-    secondOperand = currentOperationDisplay.textContent
-    currentOperationDisplay.textContent = roundResult(
-      operate(currentOperation, firstOperand, secondOperand)
-    )
-    pastOperationDisplay.textContent = `${firstOperand} ${currentOperation} ${secondOperand} =`
+
+    else if (currentOperation === null || shouldResetDisplay) return
+
+    else if (currentOperation === '÷' && firstOperand === '0') {
+        currentOperationDisplay.textContent = 'ERROR'
+        pastOperationDisplay.textContent = 'ERROR: DIVISION BY ZERO'
+    }
+
+    else if (
+        currentOperation === '!' && 
+        (!firstOperand.includes('.'))
+        ) {
+            shouldResetDisplay = false
+            currentOperationDisplay.textContent += factorialize(firstOperand)
+            pastOperationDisplay.textContent = `${firstOperand} ${currentOperation} =`
+    }
+
+    else {
+        secondOperand = currentOperationDisplay.textContent
+        currentOperationDisplay.textContent = roundResult(
+            operate(currentOperation, firstOperand, secondOperand)
+            )
+        pastOperationDisplay.textContent = `${firstOperand} ${currentOperation} ${secondOperand} =`
+    }
     currentOperation = null
 }
 
@@ -109,14 +137,21 @@ function roundResult(number) {
       return Math.round(number * 10000) / 10000
 }
 
-
 function handleKeyboardInput(e) {
     if (e.key >= 0 && e.key <= 9) appendDigit(e.key)
     if (e.key === '.') appendPoint()
     if (e.key === '=' || e.key === 'Enter') calculate()
     if (e.key === 'Backspace') deleteInput()
     if (e.key === 'Escape') clear()
-    if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/')
+    if (
+        e.key === '+' || 
+        e.key === '-' || 
+        e.key === '*' || 
+        e.key === '/' ||
+        e.key === '^' ||
+        e.key === '%' ||
+        e.key === '!' 
+        )
       setOperation(convertOperator(e.key))
 }
   
@@ -125,8 +160,10 @@ function convertOperator(keyboardOperator) {
     if (keyboardOperator === '*') return '×'
     if (keyboardOperator === '-') return '−'
     if (keyboardOperator === '+') return '+'
+    if (keyboardOperator === '%') return '%'
+    if (keyboardOperator === '^') return '**'
+    if (keyboardOperator === '!') return '!'
 }
-
 
 function add(a, b) {
     return a + b
@@ -144,22 +181,40 @@ function divide(a, b) {
     return a / b
 }
 
+function modulo(a, b) {
+    return a % b
+}
+
+function exponent(a, b) {
+    return Math.pow(a, b)
+}
+
+function factorialize(a) {
+    if (a < 0) return -1
+    else if (a === 0) return 1
+    else return (a * factorialize(a-1))
+}
+
   
 function operate(operator, a, b) {
     a = Number(a)
     b = Number(b)
     switch (operator) {
-      case '+':
-        return add(a, b)
-      case '−':
-        return substract(a, b)
-      case '×':
-        return multiply(a, b)
-      case '÷':
-        if (b === 0) return null
-        else return divide(a, b)
-      default:
-        return null
+        case '+':
+            return add(a, b)
+        case '−':
+            return substract(a, b)
+        case '×':
+            return multiply(a, b)
+        case '÷':
+            if (b === 0) return null
+            else return divide(a, b)
+        case '%':
+            return modulo(a, b)
+        case '**':
+            return exponent(a, b)
+        default:
+            return null
     }
 }
 
